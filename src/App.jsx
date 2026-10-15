@@ -19,11 +19,14 @@ import Floater from './pages/Floater';
 import Weather from './Components/Weather';
 import DailyCropPrice from './Components/DailyCropPrice';
 import { GovtPriceChart } from './Components/GovtPriceChart';
+import ScrollToTop from './Components/ScrollToTop';
+import InfoPage from './pages/InfoPage';
 
 function App() {
 
   return (
     <div className="App">
+      <ScrollToTop />
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
@@ -43,6 +46,10 @@ function App() {
         <Route path="/report" element={<Report />} />
         <Route path="/soil" element={<SoilSensor />} />
         <Route path="/floater" element={<Floater />} />
+        <Route path="/faq" element={<InfoPage page="faq" />} />
+        <Route path="/terms" element={<InfoPage page="terms" />} />
+        <Route path="/privacy" element={<InfoPage page="privacy" />} />
+        <Route path="/cookies" element={<InfoPage page="cookies" />} />
       </Routes>
       <Footer />
     </div>
