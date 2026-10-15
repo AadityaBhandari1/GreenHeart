@@ -1,0 +1,107 @@
+@import "tailwindcss";
+/* Fullscreen Video Container */
+
+.video-container {
+    position: relative;
+    width: 100%;
+    height: 100vh; /* Full viewport height */
+    overflow: hidden;
+}
+
+/* Background Video */
+.background-video {
+    position: absolute;
+    top: 100%;
+    left: 100%;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: translate(-50%, -50%);
+    z-index: -1;
+}
+
+/* Dark Overlay */
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Dark overlay */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    padding: 20px;
+}
+
+/* Base Typography */
+:root {
+    font-size: 16px;
+}
+
+/* Responsive Typography */
+@media screen and (max-width: 768px) {
+    :root {
+        font-size: 14px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    :root {
+        font-size: 12px;
+    }
+}
+
+/* Responsive Text */
+.overlay h1 {
+    font-size: clamp(2.5rem, 8vw, 5rem);
+    font-weight: bold;
+    max-width: 90%;
+    line-height: 1.2;
+}
+
+.overlay h2 {
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    color: #16bd64;
+    margin-top: 1rem;
+    margin-bottom: 2rem;
+    line-height: 1.3;
+}
+
+/* Global Responsive Text Classes */
+.text-responsive-xl {
+    font-size: clamp(1.5rem, 5vw, 3rem);
+}
+
+.text-responsive-lg {
+    font-size: clamp(1.25rem, 4vw, 2rem);
+}
+
+.text-responsive-md {
+    font-size: clamp(1rem, 3vw, 1.5rem);
+}
+
+.text-responsive-sm {
+    font-size: clamp(0.875rem, 2vw, 1rem);
+}
+
+.iframe-container {
+    position: relative;
+    width: 100%;
+    height: 100vh; /* Full viewport height */
+    margin: 0;
+    padding: 0;
+  }
+  
+  .iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+  
