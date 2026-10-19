@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 {/* 1. Precision Farming Card */ }
 <div className="h-40 overflow-hidden bg-gradient-to-r from-green-600 to-green-400"></div>
 function ServiceOverview() {
@@ -70,9 +71,9 @@ function ServiceOverview() {
                       <span><strong>Yield Prediction & Risk Assessment</strong>: AI models for risk forecasting</span>
                     </li>
                   </ul>
-                  <a href="/services/precision-farming" className="inline-block px-4 py-2 bg-gradient-to-r from-green-600 to-green-500 text-white rounded-full text-sm font-medium hover:from-green-700 hover:to-green-600 transition-all duration-300">
+                  <Link to="/services/precision-farming" className="inline-block px-4 py-2 bg-gradient-to-r from-green-600 to-green-500 text-white rounded-full text-sm font-medium hover:from-green-700 hover:to-green-600 transition-all duration-300">
                     Learn More
-                  </a>
+                  </Link>
                 </div>
               </div>
 
@@ -97,9 +98,9 @@ function ServiceOverview() {
                       <span><strong>Geospatial Analysis</strong>: In-depth analysis for better decision making</span>
                     </li>
                   </ul>
-                  <a href="/gis" className="inline-block px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-400 text-white rounded-full text-sm font-medium hover:from-green-600 hover:to-emerald-500 transition-all duration-300">
+                  <Link to="/services/gis-mapping" className="inline-block px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-400 text-white rounded-full text-sm font-medium hover:from-green-600 hover:to-emerald-500 transition-all duration-300">
                     Learn More
-                  </a>
+                  </Link>
                 </div>
               </div>
 
@@ -124,9 +125,9 @@ function ServiceOverview() {
                       <span><strong>Automated Crop Spraying</strong>: Precision pesticide distribution</span>
                     </li>
                   </ul>
-                  <a href="/services/drone-monitoring" className="inline-block px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-400 text-white rounded-full text-sm font-medium hover:from-emerald-600 hover:to-teal-500 transition-all duration-300">
+                  <Link to="/services/drone-monitoring" className="inline-block px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-400 text-white rounded-full text-sm font-medium hover:from-emerald-600 hover:to-teal-500 transition-all duration-300">
                     Learn More
-                  </a>
+                  </Link>
                 </div>
               </div>
 
@@ -151,9 +152,9 @@ function ServiceOverview() {
                       <span><strong>Agri-Fintech Solutions</strong>: Insurance and financial advisory</span>
                     </li>
                   </ul>
-                  <a href="/services/farm-finance" className="inline-block px-4 py-2 bg-gradient-to-r from-teal-500 to-cyan-400 text-white rounded-full text-sm font-medium hover:from-teal-600 hover:to-cyan-500 transition-all duration-300">
+                  <Link to="/services/farm-finance" className="inline-block px-4 py-2 bg-gradient-to-r from-teal-500 to-cyan-400 text-white rounded-full text-sm font-medium hover:from-teal-600 hover:to-cyan-500 transition-all duration-300">
                     Learn More
-                  </a>
+                  </Link>
                 </div>
               </div>
 
@@ -205,9 +206,9 @@ function ServiceOverview() {
                       <span><strong>Training & Workshops</strong>: Digital literacy in farming</span>
                     </li>
                   </ul>
-                  <a href="/training" className="inline-block px-4 py-2 bg-gradient-to-r from-green-500 to-green-400 text-white rounded-full text-sm font-medium hover:from-green-600 hover:to-green-500 transition-all duration-300">
+                  <Link to="/workshops" className="inline-block px-4 py-2 bg-gradient-to-r from-green-500 to-green-400 text-white rounded-full text-sm font-medium hover:from-green-600 hover:to-green-500 transition-all duration-300">
                     Join Workshops
-                  </a>
+                  </Link>
                 </div>
               </div>
             </div>

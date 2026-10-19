@@ -5,7 +5,7 @@ import { FaYoutube, FaFacebookF, FaInstagram, FaXTwitter, FaLinkedinIn } from 'r
 // ====== EDIT THESE ======
 const COMPANY_NAME = 'GreenHeart';
 
-const CONTACT = {
+export const CONTACT = {
   phone: '+91 9797140756',
   email: 'freemindlabs.org@gmail.com',
 };

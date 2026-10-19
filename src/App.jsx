@@ -21,6 +21,8 @@ import DailyCropPrice from './Components/DailyCropPrice';
 import { GovtPriceChart } from './Components/GovtPriceChart';
 import ScrollToTop from './Components/ScrollToTop';
 import InfoPage from './pages/InfoPage';
+import ServiceDetail from './pages/ServiceDetail';
+import Workshops from './pages/Workshops';
 
 function App() {
 
@@ -37,6 +39,8 @@ function App() {
         <Route path="/crop-chart" element={<GovtPriceChart />} />
         <Route path="/aboutus" element={<Aboutus />} />
         <Route path="/services" element={<Services />} />
+        <Route path="/services/:slug" element={<ServiceDetail />} />
+        <Route path="/workshops" element={<Workshops />} />
         <Route path="/education" element={<Education />} />
         <Route path="/gis" element={<GIS />} />
         <Route path="/signup" element={<SignUpPage />} />
