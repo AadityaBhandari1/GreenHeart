@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { getAllLandData } from "../context/firebase";
-import { GoogleMap, LoadScript, Marker, DirectionsRenderer, Circle, DrawingManager, Polygon, GroundOverlay, StandaloneSearchBox, } from '@react-google-maps/api';
+import { GoogleMap, LoadScript, Marker, DirectionsRenderer, Circle, Polygon, GroundOverlay, StandaloneSearchBox, } from '@react-google-maps/api';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, AreaChart, Area } from 'recharts';
 import axios from "axios";
 import ReactMarkdown from "react-markdown";
@@ -19,6 +19,8 @@ const containerStyle = {
     height: '100%',
 };
 const startingPoint = { lat: 28.6820585, lng: 77.4542772 };
+// Must be defined outside the component. A new array on every render makes the Maps script reload.
+const MAP_LIBRARIES = ["places"];
 
 
 // Add this component inside the GIS function component
@@ -182,10 +184,10 @@ export default function GIS() {
                 if (permission.state === 'granted') {
                     getLocation();
                 } else if (permission.state === 'prompt') {
-                    toast.info("Please allow location access for better experience.");
+                    toast("Please allow location access for better experience.", { icon: "📍" });
                     getLocation();
                 } else {
-                    toast.warning("Location access denied. Using default location.");
+                    toast("Location access denied. Using default location.", { icon: "⚠️" });
                 }
             } catch (error) {
                 console.error("Error requesting location permission:", error);
@@ -420,6 +422,10 @@ export default function GIS() {
                     // Remove duplicate click listener; keep a single handler below
                     // Add click event listener for polygons
                     mapRef.current.data.addListener('click', (event) => {
+                        if (drawingModeRef.current) {
+                            addDraftPoint(event.latLng);
+                            return;
+                        }
                         const feature = event.feature;
 
                         // Access properties correctly
@@ -510,7 +516,9 @@ export default function GIS() {
         setLocation(e.target.value);
     };
     const [drawingMode, setDrawingMode] = useState(false);
-    const [drawingManager, setDrawingManager] = useState(null);
+    const [draftPoints, setDraftPoints] = useState([]);
+    const drawingModeRef = useRef(false);
+    drawingModeRef.current = drawingMode;
     const [customPolygons, setCustomPolygons] = useState([]);
 
     const getSelectedPolygonInfo = useCallback(() => {
@@ -587,22 +595,22 @@ export default function GIS() {
         }
     }, [API_BASE, getSelectedPolygonInfo, startDate, endDate, aiLanguage]);
 
-    // on drawing complete
-    const onPolygonComplete = (polygon) => {
-        const path = polygon.getPath().getArray().map(p => ({
-            lat: p.lat(),
-            lng: p.lng(),
-        }));
+    // Drawing a field: click the map to add corners, then press Finish
+    const addDraftPoint = (latLng) => {
+        if (!latLng) return;
+        setDraftPoints((prev) => [...prev, { lat: latLng.lat(), lng: latLng.lng() }]);
+    };
+    const undoDraftPoint = () => setDraftPoints((prev) => prev.slice(0, -1));
+    const finishDrawing = () => {
+        if (draftPoints.length < 3) {
+            toast.error("Add at least 3 points to make a field.");
+            return;
+        }
         const id = `poly-${Date.now()}`;
-
-        // listen for click to re-select, if you need
-        polygon.addListener("click", () => {
-            setSelectedPolygon(id);
-            // polygon.setOptions({ fillColor: '#FFFF00', fillOpacity: 0.5 });
-        });
-
-        // store
-        setCustomPolygons((prev) => [...prev, { id, path }]);
+        setCustomPolygons((prev) => [...prev, { id, path: draftPoints }]);
+        setDraftPoints([]);
+        setDrawingMode(false);
+        toast.success("Field added.");
     };
 
     // compute bbox string with a tiny margin
@@ -620,15 +628,13 @@ export default function GIS() {
     const toggleDrawingMode = () => {
         if (drawingMode) {
             setDrawingMode(false);
-            drawingManager.setDrawingMode(null);
+            setDraftPoints([]);
         } else {
             setDrawingMode(true);
-            drawingManager.setDrawingMode(google.maps.drawing.OverlayType.POLYGON);
+            setDraftPoints([]);
+            toast("Click on the map to add corners, then press Finish.", { icon: "✏️" });
         }
     };
-
-
-
 
     const handleValidate = (formData) => {
         toast.success('Insurance validated report will be sent on mail');
@@ -647,13 +653,15 @@ export default function GIS() {
                     <div className="flex flex-col  flex-1  rounded-lg overflow-hidden">
                         {/* Map (responsive height) */}
                         <div className="h-[60vh] md:h-[70vh] lg:h-[75vh]">
-                            <LoadScript googleMapsApiKey={import.meta.env.VITE_GOOGLE_KEY} libraries={["drawing", "places"]}>
+                            <LoadScript googleMapsApiKey={import.meta.env.VITE_GOOGLE_KEY} libraries={MAP_LIBRARIES}>
                                 <GoogleMap
                                     mapContainerStyle={containerStyle}
                                     center={currentLocation}
                                     zoom={15}
                                     onLoad={handleMapLoad}
                                     mapTypeId="hybrid"
+                                    onClick={(e) => { if (drawingMode) addDraftPoint(e.latLng); }}
+                                    options={{ draggableCursor: drawingMode ? "crosshair" : undefined }}
                                 >
                                     <StandaloneSearchBox
                                         onLoad={ref => searchBoxRef.current = ref}
@@ -693,25 +701,52 @@ export default function GIS() {
                                             }}
                                         />
                                     </StandaloneSearchBox>
-                                    {mapLoaded && (
-                                        <DrawingManager
-                                            onLoad={(drawingManager) => {
-                                                setDrawingManager(drawingManager);
-                                                drawingManager.setDrawingMode(null);
-                                            }}
-                                            onPolygonComplete={onPolygonComplete}
-                                            options={{
-                                                drawingControl: false,
-                                                polygonOptions: {
-                                                    fillColor: "#4CAF50",
-                                                    fillOpacity: 0.2,
-                                                    strokeColor: "#4CAF50",
-                                                    clickable: true,
-                                                    editable: true,
-                                                    draggable: false,
-                                                },
-                                            }}
-                                        />
+                                    {drawingMode && (
+                                        <>
+                                            {draftPoints.length >= 2 && (
+                                                <Polygon
+                                                    paths={draftPoints}
+                                                    options={{
+                                                        fillColor: "#4CAF50",
+                                                        fillOpacity: 0.2,
+                                                        strokeColor: "#4CAF50",
+                                                        strokeWeight: 2,
+                                                        clickable: false,
+                                                    }}
+                                                />
+                                            )}
+                                            {draftPoints.map((pt, i) => (
+                                                <Marker
+                                                    key={i}
+                                                    position={pt}
+                                                    clickable={false}
+                                                    icon={{
+                                                        path: window.google.maps.SymbolPath.CIRCLE,
+                                                        scale: 5,
+                                                        fillColor: "#ffffff",
+                                                        fillOpacity: 1,
+                                                        strokeColor: "#4CAF50",
+                                                        strokeWeight: 2,
+                                                    }}
+                                                />
+                                            ))}
+                                            <div
+                                                style={{ position: "absolute", top: 52, left: 12, zIndex: 10 }}
+                                                className="bg-gray-900 text-white rounded-lg p-2 flex items-center gap-2 text-sm"
+                                            >
+                                                <span>{draftPoints.length} point{draftPoints.length === 1 ? "" : "s"}</span>
+                                                <button
+                                                    onClick={undoDraftPoint}
+                                                    disabled={!draftPoints.length}
+                                                    className="px-3 py-1 rounded bg-gray-700 disabled:opacity-40"
+                                                >
+                                                    Undo
+                                                </button>
+                                                <button onClick={finishDrawing} className="px-3 py-1 rounded bg-green-600">
+                                                    Finish
+                                                </button>
+                                            </div>
+                                        </>
                                     )}
                                     {selectedPolygonData && (
                                         <SvgMaskedOverlay
